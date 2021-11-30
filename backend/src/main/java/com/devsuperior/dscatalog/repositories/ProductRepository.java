@@ -14,11 +14,16 @@ import com.devsuperior.dscatalog.entities.Product;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 	
+	// coalesce é pra rodar no postgres
 	@Query("SELECT DISTINCT obj FROM Product obj "
 			+ "INNER JOIN obj.categories cat "
 			+ "WHERE (COALESCE(:categories) IS NULL OR cat IN :categories)"  // BUSCA POR CATEGORIA
 			+ "AND "
 			+ "(LOWER(obj.name) LIKE LOWER(CONCAT('%',:name,'%')))") // busca por nome de produto
 	Page<Product> find(List<Category> categories, String name, Pageable page);
+	
+	@Query("SELECT obj FROM Product obj JOIN FETCH obj.categories " //o fetch já traz as categories junto com os produtos
+			+ "WHERE obj IN :products") // onde o product pertença a : products 
+	List<Product> findProductsWithCategories(List<Product> products);
 
 }

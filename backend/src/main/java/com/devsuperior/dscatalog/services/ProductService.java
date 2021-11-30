@@ -1,6 +1,6 @@
 package com.devsuperior.dscatalog.services;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,11 +34,10 @@ public class ProductService {
 	
 	@Transactional(readOnly = true)
 	public Page<ProductDTO> findAllPaged(String name,Long categoryId, Pageable pageable) {
-		Category category = categoryId == 0 ? null : categoryRepository.getOne(categoryId); // metodo para busca minha categoria
-		List<Category> categories = new ArrayList<>();
-		categories.add(category);
-		Page<Product> list = repository.find(categories,name, pageable);
-		return list.map(x -> new ProductDTO(x));
+		List<Category> categories = categoryId == 0 ? null : Arrays.asList(categoryRepository.getOne(categoryId)); // metodo para busca minha categoria
+		Page<Product> page = repository.find(categories,name, pageable);//Arrays.asList já instancia uma lista e o que estiver dentro de () sera adicionado na linha
+		repository.findProductsWithCategories(page.getContent());//chamando o  meu metodo n + 1 consulta, o getContent converte minha page para lista
+		return page.map(x -> new ProductDTO(x));
 	}
 
 	@Transactional(readOnly = true)
