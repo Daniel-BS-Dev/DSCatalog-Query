@@ -12,7 +12,7 @@
 
 ## Sobre o projeto
 
-DSCatalog-Query é a continuação do DSCatalog-part-1 onde será criada as tabelas no banco de dados Postgres e também algumas consultas JPA 
+DSCatalog-Query é a continuação do DSCatalog-Rest onde será criada as tabelas no banco de dados Postgres e também algumas consultas JPA 
 
 ## Script SQL estrutura DSCatalog no Postgres :
 
