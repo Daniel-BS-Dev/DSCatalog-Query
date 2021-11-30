@@ -1,4 +1,4 @@
-# DSCatalog-part-2
+# DSCatalog-Query
 
 ## Ferramentas utilizadas
 
