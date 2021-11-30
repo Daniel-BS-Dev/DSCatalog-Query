@@ -12,8 +12,11 @@ import com.devsuperior.dscatalog.entities.Product;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 	
-	@Query("SELECT obj FROM Product obj INNER JOIN obj.categories cat "
-			+ "WHERE :category IN cat")
-	Page<Product> find(Category category, Pageable page);
+	@Query("SELECT DISTINCT obj FROM Product obj "
+			+ "INNER JOIN obj.categories cat "
+			+ "WHERE (:category IS NULL OR :category IN cat)"  // BUSCA POR CATEGORIA
+			+ "AND "
+			+ "(LOWER(obj.name) LIKE CONCAT('%',LOWER(:name),'%'))") // busca por nome de produto
+	Page<Product> find(Category category, String name, Pageable page);
 
 }
