@@ -151,7 +151,7 @@ INSERT INTO tb_reply (body, moment, topic_id, author_id) VALUES ('Deu certo, val
        List<Product> findProductsCategories(List<Product> products);
  ````
  
- ## Filtrado o categorias e nomes de produtos
+ ## Filtrando categorias e nomes de produtos
  ````java
  @Query("SELECT DISTINCT obj FROM Product obj "
 			+ "INNER JOIN obj.categories cat "
