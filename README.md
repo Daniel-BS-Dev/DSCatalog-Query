@@ -60,6 +60,12 @@ alter table tb_user_role add constraint FK7vn3h53d0tqdimm8cp45gc0kl foreign key 
         spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
         spring.jpa.hibernate.ddl-auto=none
 
+
+### aplication-test.properties
+
+      #se caso eu queira que o sql apareça no console
+      spring.jpa.show-sql=true
+      spring.jpa.properties.hibernate.format_sql=true
  
  ## SQL para seed no Postgres
  
@@ -145,7 +151,51 @@ INSERT INTO tb_reply (body, moment, topic_id, author_id) VALUES ('Deu certo, val
        List<Product> findProductsCategories(List<Product> products);
  ````
  
- 
+ ## Filtrado o categorias e nomes de produtos
+ ````java
+ @Query("SELECT DISTINCT obj FROM Product obj "
+			+ "INNER JOIN obj.categories cat "
+			+ "WHERE (COALESCE(:categories) IS NULL OR cat IN :categories)" 
+			+ "AND "
+			+ "(LOWER(obj.name) LIKE LOWER(CONCAT('%',:name,'%')))") 
+	Page<Product> find(List<Category> categories, String name, Pageable page);
+	
+	@Query("SELECT obj FROM Product obj JOIN FETCH obj.categories " 
+			+ "WHERE obj IN :products") 
+	List<Product> findProductsWithCategories(List<Product> products);
+  
+  ``````
+  
+
+## Configurando o Cors
+
+### ResourceServerConfig
+````java
+@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration corsConfig = new CorsConfiguration();
+		corsConfig.setAllowedOriginPatterns(Arrays.asList("*"));
+		corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
+		corsConfig.setAllowCredentials(true);// permitindo credenciais
+		corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", corsConfig);
+		return source;
+	}
+
+	@Bean
+	public FilterRegistrationBean<CorsFilter> corsFilter() {
+		FilterRegistrationBean<CorsFilter> bean 
+			= new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource()));
+		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		return bean;
+	}	
+
+}
+
+
+````
  
  
  
