@@ -155,6 +155,7 @@ INSERT INTO tb_product_category (product_id, category_id) VALUES (25, 3);
  ````
  
  ## Filtrando categorias e nomes de produtos
+ ### ProductRepository
  ````java
  @Query("SELECT DISTINCT obj FROM Product obj "
 			+ "INNER JOIN obj.categories cat "
@@ -169,6 +170,16 @@ INSERT INTO tb_product_category (product_id, category_id) VALUES (25, 3);
   
   ``````
   
+  ###ProductService
+  ````java
+        @Transactional(readOnly = true)
+        public Page<ProductDTO> findAllPaged(Long categoryId, String name, Pageable pageable) {
+ 	List<Category> categories = (categoryId == 0) ? null :
+        Arrays.asList(categoryRepository.getOne(categoryId));
+ 	Page<Product> list = repository.find(categories, name, pageable);
+ 	return list.map(x -> new ProductDTO(x));
+}
+````
 
 ## Configurando o Cors
 
@@ -200,6 +211,16 @@ INSERT INTO tb_product_category (product_id, category_id) VALUES (25, 3);
 
 ````
  
+ ## Consulta de notificações do DSLearn
  
+ ````java
+ @Query("SELECT obj FROM Notification obj WHERE "
+        + "(obj.user = :user) AND "
+        + "(:unreadOnly = false OR obj.read = false) "
+        + "ORDER BY obj.moment DESC")
+Page<Notification> find(User user, boolean unreadOnly, Pageable pageable);
+
+ 
+ ````
  
  
